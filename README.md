@@ -78,6 +78,8 @@ git tag 0.0.2
 git push origin 0.0.2
 ```
 
+If a workflow fails before publication, open **Actions → Release APK → Run workflow**, select `main`, and enter the existing version tag.
+
 ## Checking the build
 
 The tools in `tools/` are Kotlin scripts. They need the Kotlin command line compiler, version 1.9 or later (`sudo snap install --classic kotlin` on Ubuntu, or `sdk install kotlin` with SDKMAN). Run them from anywhere inside the project.
