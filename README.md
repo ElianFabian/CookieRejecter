@@ -17,7 +17,11 @@ CookieRejecter detects supported cookie and tracking consent prompts and shows a
 - It never accepts. On a screen that offers only accept or pay, it does nothing.
 - It requires no internet permission. The in-app activity log stays in memory and is cleared when the process exits.
 
-## Install a local build
+## Install CookieRejecter
+
+Download the signed APK from the [latest GitHub release](https://github.com/ElianFabian/CookieRejecter/releases/latest).
+
+### Build locally
 
 Build with `./gradlew assembleDebug` on Linux or macOS, or `gradlew.bat assembleDebug` on Windows. Install `app/build/outputs/apk/debug/app-debug.apk` and open **CookieRejecter** to check the accessibility service status.
 
@@ -60,7 +64,9 @@ The APK is written to `app/build/outputs/apk/release/`. It is signed when a `key
 
 ### Publishing on GitHub
 
-The [release workflow](.github/workflows/release.yml) builds and signs an APK, then attaches it to a GitHub prerelease when you push a numeric tag such as `0.0.2`. The tag must match `versionName` in `app/build.gradle.kts`. Increase `versionCode` for each update so Android can install it over the previous release.
+The [release workflow](.github/workflows/release.yml) builds and signs an APK, then attaches it to a GitHub release when you push a numeric tag such as `0.0.2`. The tag must match `versionName` in `app/build.gradle.kts`. Increase `versionCode` for each update so Android can install it over the previous release.
+
+Before tagging a version, add its release notes in `docs/releases/<version>.md`. The workflow reads the notes from the tagged commit. GitHub generates notes when the file is absent.
 
 Set these repository secrets under **Settings → Secrets and variables → Actions**.
 

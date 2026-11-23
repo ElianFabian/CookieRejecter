@@ -96,9 +96,16 @@ jobs:
             --out "CookieRejecter-$RELEASE_TAG.apk" "$tmp_dir/aligned.apk"
           "$tools/apksigner" verify "CookieRejecter-$RELEASE_TAG.apk"
 
-      - name: Publish GitHub prerelease
+      - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          notes_file="docs/releases/$RELEASE_TAG.md"
+          if [[ -s "$notes_file" ]]; then
+            notes=(--notes-file "$notes_file")
+          else
+            notes=(--generate-notes)
+          fi
+
           gh release create "$RELEASE_TAG" "CookieRejecter-$RELEASE_TAG.apk" \
-            --verify-tag --prerelease --title "CookieRejecter $RELEASE_TAG" --generate-notes
+            --verify-tag --title "CookieRejecter $RELEASE_TAG" "${notes[@]}"
