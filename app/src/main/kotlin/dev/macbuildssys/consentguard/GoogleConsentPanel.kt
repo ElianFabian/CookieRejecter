@@ -192,10 +192,12 @@ internal class GoogleConsentPanel private constructor(
         )
 
         fun read(root: AccessibilityNodeInfo, readControls: Boolean): GoogleConsentPanel? =
-            findDialog(root)?.let { fromDialog(it, readControls) }
+            findDialog(root) { fromDialog(it, readControls) }
 
-        fun readBanner(root: AccessibilityNodeInfo): BannerAction? {
-            val dialog = findDialog(root) ?: return null
+        fun readBanner(root: AccessibilityNodeInfo): BannerAction? =
+            findDialog(root, ::bannerFromDialog)
+
+        private fun bannerFromDialog(dialog: AccessibilityNodeInfo): BannerAction? {
             val children = dialog.children()
             val buttons = children.filter { it.isClickable && it.isEnabled && it.isVisibleToUser }
             for (form in forms) {
@@ -213,13 +215,22 @@ internal class GoogleConsentPanel private constructor(
             return null
         }
 
-        private fun findDialog(root: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        private fun <T : Any> findDialog(root: AccessibilityNodeInfo, match: (AccessibilityNodeInfo) -> T?): T? {
             val queue = ArrayDeque<AccessibilityNodeInfo>()
             queue.add(root)
             repeat(40) {
                 val node = queue.removeFirstOrNull() ?: return null
-                if (node.className?.toString() == "android.app.AlertDialog") return node
-                for (i in 0 until minOf(node.childCount, 12)) node.getChild(i)?.let(queue::addLast)
+                val nodeClass = node.className?.toString()
+                if (nodeClass == "android.app.AlertDialog") match(node)?.let { return it }
+                for (i in 0 until minOf(node.childCount, 12)) {
+                    val child = node.getChild(i) ?: continue
+                    // Some WebViews expose the form container as a plain view.
+                    // Require the same footer labels and form structure in either case.
+                    if (nodeClass == "android.webkit.WebView" &&
+                        child.className?.toString() == "android.view.View" && child.childCount in 3..12
+                    ) match(child)?.let { return it }
+                    queue.addLast(child)
+                }
             }
             return null
         }

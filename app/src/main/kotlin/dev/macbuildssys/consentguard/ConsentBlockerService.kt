@@ -188,12 +188,14 @@ class ConsentBlockerService : AccessibilityService() {
     private class RunControls {
         @Volatile var mode = RunMode.RUNNING
         var googlePanelDeadline = 0L
+        var activeSince: Long? = SystemClock.elapsedRealtime()
+        var priorActiveTime = 0L
     }
     private val mainHandler = Handler(Looper.getMainLooper())
     private val prompt by lazy { ConsentPrompt(this) }
     @Volatile private var offeredWindow: ConsentWindow? = null
     @Volatile private var runControls: RunControls? = null
-    private var approvedWindow: ConsentWindow? = null
+    @Volatile private var approvedWindow: ConsentWindow? = null
     private var approvalExpires = 0L
     private var approvalTimeout: Runnable? = null
     private var pendingConfirmation: (() -> Unit)? = null
@@ -320,6 +322,8 @@ class ConsentBlockerService : AccessibilityService() {
                     approvedWindow = window
                     val approvedControls = RunControls()
                     runControls = approvedControls
+                    ConsentReadyNotification.clear(this)
+                    ConsentReadyNotification.clearScrollDelayWarning(this)
                     lastResult = R.string.result_running
                     ConsentActivityLog.record(window.packageName, R.string.log_started)
                     offerPrompt(null)
@@ -340,6 +344,8 @@ class ConsentBlockerService : AccessibilityService() {
             if (runControls !== controls || controls.mode != mode) return@post
             when (mode) {
                 RunMode.PAUSED -> {
+                    controls.activeSince?.let { controls.priorActiveTime += SystemClock.elapsedRealtime() - it }
+                    controls.activeSince = null
                     cancelApprovalCallbacks()
                     approvalExpires = Long.MAX_VALUE
                     googleReview = null
@@ -347,6 +353,7 @@ class ConsentBlockerService : AccessibilityService() {
                     ConsentActivityLog.record(window.packageName, R.string.result_paused)
                 }
                 RunMode.RUNNING -> {
+                    if (controls.activeSince == null) controls.activeSince = SystemClock.elapsedRealtime()
                     googleReview = null
                     controls.googlePanelDeadline = 0L
                     switchToRecheck = null
@@ -390,12 +397,19 @@ class ConsentBlockerService : AccessibilityService() {
         val controls = runControls ?: return
         val window = approvedWindow ?: return
         if (controls.mode != RunMode.RUNNING) return
+        val currentActiveTime = controls.activeSince?.let { SystemClock.elapsedRealtime() - it } ?: 0L
+        val durationMs = controls.priorActiveTime + currentActiveTime
         pendingConfirmation = action
         controls.mode = RunMode.READY
         cancelApprovalCallbacks()
         lastResult = R.string.result_ready
-        ConsentActivityLog.record(window.packageName, R.string.result_ready)
-        if (verifiedVendors) ConsentReadyNotification.show(this)
+        ConsentActivityLog.record(
+            window.packageName, R.string.result_ready, durationMs = durationMs.takeIf { verifiedVendors }
+        )
+        if (verifiedVendors) {
+            ConsentReadyNotification.show(this, durationMs)
+            debugLog("Verified review completed in $durationMs ms")
+        }
         refreshPrompt()
     }
 
@@ -428,16 +442,26 @@ class ConsentBlockerService : AccessibilityService() {
             if (finalResult == R.string.result_stopped) reviewWindow = window
             lastResult = finalResult
             ConsentActivityLog.record(window.packageName, finalResult)
-            if (finalResult == R.string.result_vendor_review) {
+            val reviewToast = when (finalResult) {
+                R.string.result_vendor_review -> R.string.vendor_review_toast
+                R.string.result_scroll_delay_review -> {
+                    if (ConsentReadyNotification.showScrollDelayWarning(this)) null else R.string.scroll_delay_review_toast
+                }
+                else -> null
+            }
+            if (reviewToast != null) {
                 mainHandler.post {
-                    Toast.makeText(forAppLanguage(), R.string.vendor_review_toast, Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(forAppLanguage(), reviewToast, Toast.LENGTH_LONG).show()
                 }
             }
         }
         if (hadControls) {
             cancelApprovalCallbacks()
-            ConsentReadyNotification.clear(this)
+            // A change of active window can end confirmation even while the user
+            // is reading the completion alert. Keep that record available.
+            if (runControls?.mode != RunMode.READY) {
+                ConsentReadyNotification.clear(this)
+            }
         }
         approvedWindow = null
         runControls = null
@@ -461,6 +485,13 @@ class ConsentBlockerService : AccessibilityService() {
            system's, which send a steady stream of events (the clock, the
            status bar) that have nothing to do with the page underneath. */
         if (eventPackage == this.packageName) return
+        if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= 30 && event.eventType == AccessibilityEvent.TYPE_VIEW_SCROLLED) {
+            val window = approvedWindow
+            if (window != null && window.packageName == eventPackage && window.id == event.windowId) {
+                Log.d("CookieRejecterReview", "Scroll event window=${event.windowId} " +
+                    "source=${event.className} y=${event.scrollY}/${event.maxScrollY} deltaY=${event.scrollDeltaY}")
+            }
+        }
         if (event.eventType == AccessibilityEvent.TYPE_VIEW_CLICKED) {
             if (runControls?.mode == RunMode.READY) handler.post {
                 val window = approvedWindow
@@ -505,7 +536,13 @@ class ConsentBlockerService : AccessibilityService() {
     private fun runScan() {
         lastScanStartedAt = SystemClock.uptimeMillis()
         val root = rootInActiveWindow ?: run {
-            finishApproval(R.string.result_incomplete)
+            if (runControls?.mode == RunMode.READY) return
+            val review = googleReview
+            if (review != null && runControls?.mode == RunMode.RUNNING) {
+                review.rootUnavailable()
+            } else {
+                finishApproval(R.string.result_incomplete)
+            }
             return
         }
         /* The window that is actually on screen decides which app this is,
@@ -702,6 +739,9 @@ class ConsentBlockerService : AccessibilityService() {
        triggers a fresh event and a fresh pass that finds the reject
        button on the next screen. */
     private fun scanAndActInner(root: AccessibilityNodeInfo, packageName: String) {
+        // Opening the notification shade temporarily makes System UI active.
+        // Keep the pending confirmation tied to its original app window.
+        if (runControls?.mode == RunMode.READY && packageName == "com.android.systemui") return
         /* Checked here as well as when an event arrives, because the follow
            up scans call this directly and whatever is on screen by then may
            be a different app. */
@@ -729,13 +769,20 @@ class ConsentBlockerService : AccessibilityService() {
                 val controls = runControls ?: return
                 controls.googlePanelDeadline = 0L
                 lateinit var review: GoogleConsentReview
-                review = GoogleConsentReview(this, handler, packageName, activeRoot = {
-                    rootInActiveWindow?.takeIf {
-                        approvedWindow == window && runControls === controls &&
-                            (controls.mode == RunMode.RUNNING || controls.mode == RunMode.SUBMITTING) &&
-                            googleReview === review &&
-                            SystemClock.uptimeMillis() < approvalExpires && !isPaused() &&
+                val isCurrentSession = {
+                    approvedWindow == window && runControls === controls &&
+                        (controls.mode == RunMode.RUNNING || controls.mode == RunMode.SUBMITTING) &&
+                        googleReview === review && SystemClock.uptimeMillis() < approvalExpires && !isPaused()
+                }
+                val scrollDelayMs = ReviewSpeed.scrollDelay(this).toLong()
+                debugLog("Review scroll delay is $scrollDelayMs ms")
+                review = GoogleConsentReview(this, handler, packageName, scrollDelayMs, isCurrentSession, activeRoot = {
+                    if (isCurrentSession()) {
+                        rootInActiveWindow?.takeIf {
                             it.windowId == window.id && it.packageName?.toString() == window.packageName
+                        }
+                    } else {
+                        null
                     }
                 }, canTouch = { x, y -> !prompt.covers(x, y) },
                     readyToConfirm = { action -> waitForConfirmation(verifiedVendors = true, action = action) },
@@ -2398,6 +2445,7 @@ class ConsentBlockerService : AccessibilityService() {
                 }
             } else {
                 debugLog("Follow up scan found no active window (was $packageName)")
+                if (runControls?.mode == RunMode.RUNNING) googleReview?.rootUnavailable()
             }
         }
         pendingFollowUp = runnable

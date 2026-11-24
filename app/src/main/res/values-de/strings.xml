@@ -64,5 +64,10 @@
     <string name="home_settings">Einstellungen</string>
     <string name="completion_alerts">Abschlussbenachrichtigungen</string>
     <string name="vendor_switches_off_title">Alle Anbieterschalter sind ausgeschaltet</string>
-    <string name="vendor_switches_off_body">Tippe in den schwebenden Steuerelementen auf „%1$s“, um zu speichern.</string>
+    <string name="review_completed_in">In %1$s abgeschlossen</string>
+    <string name="review_scroll_delay">Wartezeit nach dem Scrollen</string>
+    <string name="review_delay_ms">%1$d ms</string>
+    <string name="review_scroll_delay_hint">Wenn Schalter übersprungen werden, versuche es mit einer längeren Wartezeit.</string>
+    <string name="result_scroll_delay_review">Einige Schalter konnten nicht geprüft werden. Prüfe sie vor dem Bestätigen oder passe die Wartezeit nach dem Scrollen in CookieRejecter an und versuche es erneut.</string>
+    <string name="scroll_delay_review_toast">Einige Schalter ungeprüft. Passe die Wartezeit an.</string>
 </resources>

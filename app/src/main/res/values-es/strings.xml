@@ -64,5 +64,10 @@
     <string name="home_settings">Ajustes</string>
     <string name="completion_alerts">Avisos de finalización</string>
     <string name="vendor_switches_off_title">Todos los interruptores de proveedores están desactivados</string>
-    <string name="vendor_switches_off_body">Toca %1$s en los controles flotantes para guardar.</string>
+    <string name="review_completed_in">Completado en %1$s</string>
+    <string name="review_scroll_delay">Espera después de desplazar</string>
+    <string name="review_delay_ms">%1$d ms</string>
+    <string name="review_scroll_delay_hint">Si se omiten interruptores, prueba una espera más larga.</string>
+    <string name="result_scroll_delay_review">No se pudieron verificar todos los interruptores. Revísalos antes de confirmar o ajusta Espera después de desplazar en CookieRejecter y vuelve a intentarlo.</string>
+    <string name="scroll_delay_review_toast">Hay interruptores sin verificar. Prueba a ajustar la espera.</string>
 </resources>

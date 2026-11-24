@@ -64,5 +64,10 @@
     <string name="home_settings">Impostazioni</string>
     <string name="completion_alerts">Notifiche di completamento</string>
     <string name="vendor_switches_off_title">Tutti gli interruttori dei fornitori sono disattivati</string>
-    <string name="vendor_switches_off_body">Tocca %1$s nei controlli mobili per salvare.</string>
+    <string name="review_completed_in">Completato in %1$s</string>
+    <string name="review_scroll_delay">Attesa dopo lo scorrimento</string>
+    <string name="review_delay_ms">%1$d ms</string>
+    <string name="review_scroll_delay_hint">Se alcuni interruttori vengono saltati, prova un’attesa più lunga.</string>
+    <string name="result_scroll_delay_review">Non è stato possibile verificare tutti gli interruttori. Controllali prima di confermare oppure regola l’attesa dopo lo scorrimento in CookieRejecter e riprova.</string>
+    <string name="scroll_delay_review_toast">Interruttori non verificati. Prova a regolare l’attesa.</string>
 </resources>

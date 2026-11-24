@@ -63,5 +63,10 @@
     <string name="home_settings">설정</string>
     <string name="completion_alerts">완료 알림</string>
     <string name="vendor_switches_off_title">모든 제공업체 스위치가 꺼져 있습니다</string>
-    <string name="vendor_switches_off_body">저장하려면 플로팅 컨트롤에서 %1$s을 누르세요.</string>
+    <string name="review_completed_in">%1$s 만에 완료</string>
+    <string name="review_scroll_delay">스크롤 후 대기 시간</string>
+    <string name="review_delay_ms">%1$d밀리초</string>
+    <string name="review_scroll_delay_hint">누락된 스위치가 있으면 대기 시간을 늘려 보세요.</string>
+    <string name="result_scroll_delay_review">일부 스위치를 확인하지 못했습니다. 확정 전에 확인하거나 CookieRejecter의 스크롤 후 대기 시간을 조정하고 다시 시도하세요.</string>
+    <string name="scroll_delay_review_toast">확인되지 않은 스위치가 있습니다. 대기 시간을 조정해 보세요.</string>
 </resources>

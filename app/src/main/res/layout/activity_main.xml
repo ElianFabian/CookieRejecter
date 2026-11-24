@@ -167,6 +167,18 @@
                     <include
                         android:id="@+id/openCompletionAlertsButton"
                         layout="@layout/item_home_setting" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="72dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="?attr/colorOutlineVariant"
+                        android:importantForAccessibility="no" />
+
+                    <include
+                        android:id="@+id/openScrollDelayButton"
+                        layout="@layout/item_home_setting" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>

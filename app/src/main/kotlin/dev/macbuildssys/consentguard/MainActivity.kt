@@ -25,6 +25,10 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        internal const val ACTION_OPEN_SCROLL_DELAY = "dev.cookierejecter.action.OPEN_SCROLL_DELAY"
+    }
+
     private data class AppLogRow(val title: String, val icon: Drawable, val entries: List<ConsentActivityLog.Entry>)
 
     private val languageFlags = mapOf(
@@ -67,6 +71,10 @@ class MainActivity : AppCompatActivity() {
         bindSettingsRow(R.id.openLanguageButton, R.drawable.ic_home_language, R.string.app_language) {
             showLanguages()
         }
+        bindSettingsRow(R.id.openScrollDelayButton, R.drawable.ic_home_speed, R.string.review_scroll_delay) {
+            showScrollDelays()
+        }
+        updateScrollDelaySubtitle()
         bindSettingsRow(R.id.openCompletionAlertsButton, R.drawable.ic_completion_bell, R.string.completion_alerts) {
             try {
                 startActivity(ConsentReadyNotification.settingsIntent(this))
@@ -74,6 +82,41 @@ class MainActivity : AppCompatActivity() {
                 startActivity(ConsentReadyNotification.appDetailsIntent(this))
             }
         }
+        openRequestedSettings(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        openRequestedSettings(intent)
+    }
+
+    private fun openRequestedSettings(intent: Intent) {
+        if (intent.action != ACTION_OPEN_SCROLL_DELAY) return
+        intent.action = null
+        showScrollDelays()
+    }
+
+    private fun updateScrollDelaySubtitle() {
+        findViewById<View>(R.id.openScrollDelayButton).findViewById<TextView>(R.id.homeSettingSubtitle).apply {
+            val delay = getString(R.string.review_delay_ms, ReviewSpeed.scrollDelay(this@MainActivity))
+            text = "$delay\n${getString(R.string.review_scroll_delay_hint)}"
+            visibility = View.VISIBLE
+        }
+    }
+
+    private fun showScrollDelays() {
+        val delays = ReviewSpeed.scrollDelays
+        val labels = delays.map { getString(R.string.review_delay_ms, it) }.toTypedArray()
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.review_scroll_delay)
+            .setSingleChoiceItems(labels, delays.indexOf(ReviewSpeed.scrollDelay(this))) { dialog, index ->
+                ReviewSpeed.setScrollDelay(this, delays[index])
+                updateScrollDelaySubtitle()
+                dialog.dismiss()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun bindSettingsRow(id: Int, icon: Int, title: Int, action: () -> Unit) {
@@ -169,8 +212,10 @@ class MainActivity : AppCompatActivity() {
                     ?: getString(entry.message)
                 action.text = if (subject != null) getString(entry.message) else null
                 action.visibility = if (subject != null) View.VISIBLE else View.GONE
-                detail.text = if (subject != null) entry.detail else null
-                detail.visibility = if (subject != null && entry.detail != null) View.VISIBLE else View.GONE
+                val detailText = entry.durationMs?.let { reviewDurationText(it) }
+                    ?: entry.detail.takeIf { subject != null }
+                detail.text = detailText
+                detail.visibility = if (detailText != null) View.VISIBLE else View.GONE
                 return row
             }
         }

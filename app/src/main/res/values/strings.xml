@@ -69,5 +69,10 @@
     <string name="home_settings">Settings</string>
     <string name="completion_alerts">Completion alerts</string>
     <string name="vendor_switches_off_title">All vendor switches are off</string>
-    <string name="vendor_switches_off_body">Tap %1$s in the floating controls to save.</string>
+    <string name="review_completed_in">Completed in %1$s</string>
+    <string name="review_scroll_delay">Wait after scrolling</string>
+    <string name="review_delay_ms">%1$d ms</string>
+    <string name="review_scroll_delay_hint">If switches are missed, try a longer wait.</string>
+    <string name="result_scroll_delay_review">Some switches could not be verified. Review them before confirming, or adjust Wait after scrolling in CookieRejecter and try again.</string>
+    <string name="scroll_delay_review_toast">Some switches unverified. Try adjusting the scroll delay.</string>
 </resources>

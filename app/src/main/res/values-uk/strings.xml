@@ -66,5 +66,10 @@
     <string name="home_settings">Налаштування</string>
     <string name="completion_alerts">Сповіщення про завершення</string>
     <string name="vendor_switches_off_title">Усі перемикачі постачальників вимкнено</string>
-    <string name="vendor_switches_off_body">Щоб зберегти зміни, натисніть «%1$s» на плаваючій панелі.</string>
+    <string name="review_completed_in">Завершено за %1$s</string>
+    <string name="review_scroll_delay">Очікування після прокручування</string>
+    <string name="review_delay_ms">%1$d мс</string>
+    <string name="review_scroll_delay_hint">Якщо деякі перемикачі пропущено, збільште час очікування.</string>
+    <string name="result_scroll_delay_review">Не вдалося перевірити деякі перемикачі. Перевірте їх перед підтвердженням або змініть час очікування після прокручування в CookieRejecter і повторіть спробу.</string>
+    <string name="scroll_delay_review_toast">Деякі перемикачі не перевірено. Спробуйте змінити час очікування.</string>
 </resources>

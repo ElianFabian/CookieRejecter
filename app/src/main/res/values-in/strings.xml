@@ -63,5 +63,10 @@
     <string name="home_settings">Pengaturan</string>
     <string name="completion_alerts">Notifikasi penyelesaian</string>
     <string name="vendor_switches_off_title">Semua sakelar penyedia sudah nonaktif</string>
-    <string name="vendor_switches_off_body">Ketuk %1$s pada kontrol mengambang untuk menyimpan.</string>
+    <string name="review_completed_in">Selesai dalam %1$s</string>
+    <string name="review_scroll_delay">Jeda setelah menggulir</string>
+    <string name="review_delay_ms">%1$d md</string>
+    <string name="review_scroll_delay_hint">Jika ada sakelar yang terlewat, coba jeda yang lebih lama.</string>
+    <string name="result_scroll_delay_review">Beberapa sakelar tidak dapat diperiksa. Periksa sebelum mengonfirmasi, atau sesuaikan jeda setelah menggulir di CookieRejecter lalu coba lagi.</string>
+    <string name="scroll_delay_review_toast">Ada sakelar yang belum diperiksa. Coba sesuaikan jeda.</string>
 </resources>

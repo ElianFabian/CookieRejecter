@@ -63,5 +63,10 @@
     <string name="home_settings">設定</string>
     <string name="completion_alerts">完了通知</string>
     <string name="vendor_switches_off_title">すべてのベンダーのスイッチがオフです</string>
-    <string name="vendor_switches_off_body">フローティング操作パネルの「%1$s」をタップして保存します。</string>
+    <string name="review_completed_in">%1$sで完了</string>
+    <string name="review_scroll_delay">スクロール後の待機時間</string>
+    <string name="review_delay_ms">%1$d ミリ秒</string>
+    <string name="review_scroll_delay_hint">見落とされたスイッチがある場合は、待機時間を長くしてください。</string>
+    <string name="result_scroll_delay_review">一部のスイッチを確認できませんでした。確定する前に確認するか、CookieRejecter のスクロール後の待機時間を調整して再試行してください。</string>
+    <string name="scroll_delay_review_toast">未確認のスイッチがあります。待機時間を調整してください。</string>
 </resources>

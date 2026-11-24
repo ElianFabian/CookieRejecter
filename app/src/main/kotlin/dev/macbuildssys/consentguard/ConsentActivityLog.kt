@@ -6,16 +6,17 @@ internal object ConsentActivityLog {
         val time: Long,
         val message: Int,
         val detail: String?,
-        val subject: String?
+        val subject: String?,
+        val durationMs: Long?
     )
 
     private const val MAX_ENTRIES = 300
     private val entries = ArrayDeque<Entry>()
 
     @Synchronized
-    fun record(app: String, message: Int, detail: String? = null, subject: String? = null) {
+    fun record(app: String, message: Int, detail: String? = null, subject: String? = null, durationMs: Long? = null) {
         if (entries.size == MAX_ENTRIES) entries.removeFirst()
-        entries.addLast(Entry(app, System.currentTimeMillis(), message, detail, subject))
+        entries.addLast(Entry(app, System.currentTimeMillis(), message, detail, subject, durationMs))
     }
 
     @Synchronized

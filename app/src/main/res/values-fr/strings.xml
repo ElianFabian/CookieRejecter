@@ -64,5 +64,10 @@
     <string name="home_settings">Paramètres</string>
     <string name="completion_alerts">Notifications de fin</string>
     <string name="vendor_switches_off_title">Tous les interrupteurs des fournisseurs sont désactivés</string>
-    <string name="vendor_switches_off_body">Appuyez sur « %1$s » dans les commandes flottantes pour enregistrer.</string>
+    <string name="review_completed_in">Terminé en %1$s</string>
+    <string name="review_scroll_delay">Délai après le défilement</string>
+    <string name="review_delay_ms">%1$d ms</string>
+    <string name="review_scroll_delay_hint">Si des interrupteurs sont oubliés, essayez un délai plus long.</string>
+    <string name="result_scroll_delay_review">Certains interrupteurs n’ont pas pu être vérifiés. Vérifiez-les avant de confirmer ou ajustez le délai après le défilement dans CookieRejecter, puis réessayez.</string>
+    <string name="scroll_delay_review_toast">Interrupteurs non vérifiés. Essayez d’ajuster le délai.</string>
 </resources>

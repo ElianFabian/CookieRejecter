@@ -66,5 +66,10 @@
     <string name="home_settings">Настройки</string>
     <string name="completion_alerts">Уведомления о завершении</string>
     <string name="vendor_switches_off_title">Все переключатели поставщиков выключены</string>
-    <string name="vendor_switches_off_body">Для сохранения нажмите «%1$s» на плавающей панели.</string>
+    <string name="review_completed_in">Завершено за %1$s</string>
+    <string name="review_scroll_delay">Ожидание после прокрутки</string>
+    <string name="review_delay_ms">%1$d мс</string>
+    <string name="review_scroll_delay_hint">Если какие-то переключатели пропущены, увеличьте время ожидания.</string>
+    <string name="result_scroll_delay_review">Не удалось проверить некоторые переключатели. Проверьте их перед подтверждением или измените время ожидания после прокрутки в CookieRejecter и повторите попытку.</string>
+    <string name="scroll_delay_review_toast">Некоторые переключатели не проверены. Попробуйте изменить задержку.</string>
 </resources>

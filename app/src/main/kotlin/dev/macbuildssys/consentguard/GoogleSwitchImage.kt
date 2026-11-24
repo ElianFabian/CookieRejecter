@@ -9,11 +9,7 @@ internal object GoogleSwitchImage {
     enum class State { ON, OFF, UNKNOWN }
 
     fun read(image: Bitmap, bounds: Rect): State {
-        if (bounds.left < 0 || bounds.top < 0 ||
-            bounds.right > image.width || bounds.bottom > image.height ||
-            bounds.height() < 12 || bounds.width() < bounds.height() * 1.55 ||
-            bounds.width() > bounds.height() * 2.3
-        ) return State.UNKNOWN
+        if (!canSample(image, bounds)) return State.UNKNOWN
 
         // The white thumb is left when off and right when on. Require the
         // opposite half to match the provider's track as a second signal.
@@ -25,6 +21,16 @@ internal object GoogleSwitchImage {
             else -> State.UNKNOWN
         }
     }
+
+    fun describeSamples(image: Bitmap, bounds: Rect): String {
+        if (!canSample(image, bounds)) return "outside screenshot or unexpected switch dimensions"
+        return "left=${sample(image, bounds, 0.27)}, right=${sample(image, bounds, 0.73)}"
+    }
+
+    private fun canSample(image: Bitmap, bounds: Rect): Boolean =
+        bounds.left >= 0 && bounds.top >= 0 && bounds.right <= image.width && bounds.bottom <= image.height &&
+            bounds.height() >= 12 && bounds.width() >= bounds.height() * 1.55 &&
+            bounds.width() <= bounds.height() * 2.3
 
     private enum class Track { BLUE, GRAY, WHITE, UNKNOWN }
 
