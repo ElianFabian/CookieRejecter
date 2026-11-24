@@ -56,9 +56,9 @@ Once the service is on, tap the floating button when a supported prompt appears.
 
 ### Screenshots
 
-| CookieRejecter home | Ready to confirm | Wait after scrolling |
-| :---: | :---: | :---: |
-| <a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="230" alt="CookieRejecter home showing accessibility status, usage instructions, and the activity log button"></a> | <a href="docs/screenshots/ready-to-confirm.png"><img src="docs/screenshots/ready-to-confirm.png" width="230" alt="Vendor switches are off and CookieRejecter's floating controls show Confirm choices and Stop"></a> | <a href="docs/screenshots/scroll-delay.png"><img src="docs/screenshots/scroll-delay.png" width="230" alt="Wait after scrolling chooser with delays ranging from 1 to 500 milliseconds"></a> |
+| CookieRejecter home | Ready to confirm |
+| :---: | :---: |
+| <a href="docs/screenshots/home.png"><img src="docs/screenshots/home.png" width="230" alt="CookieRejecter home showing accessibility status, usage instructions, and the activity log button"></a> | <a href="docs/screenshots/ready-to-confirm.png"><img src="docs/screenshots/ready-to-confirm.png" width="230" alt="Vendor switches are off and CookieRejecter's floating controls show Confirm choices and Stop"></a> |
 
 ## Building
 
